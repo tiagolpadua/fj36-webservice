@@ -11,7 +11,7 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 
-@WebService
+@WebService(targetNamespace="http://caelum.com.br/estoquews/v1")
 @Stateless
 public class EstoqueWS {
 	// simulando um repositorio ou banco de dados
@@ -34,7 +34,13 @@ public class EstoqueWS {
 
 	@WebMethod(operationName = "ItensPeloCodigo")
 	@WebResult(name = "ItemEstoque")
-	public List<ItemEstoque> getQuantidade(@WebParam(name = "codigo") List<String> codigos) {
+	public List<ItemEstoque> getQuantidade(@WebParam(name = "codigo") List<String> codigos,
+			@WebParam(name = "tokenUsuario", header = true) String token) {
+
+		if (token == null || !token.equals("TOKEN123")) {
+			throw new AutorizacaoException("Nao autorizado");// vamos gerar essa classe
+		}
+
 		List<ItemEstoque> itens = new ArrayList<>();
 		if (codigos == null || codigos.isEmpty()) {
 			return itens;
