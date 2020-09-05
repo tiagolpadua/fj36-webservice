@@ -1,6 +1,8 @@
 package br.com.caelum.estoque.ws;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -23,8 +25,22 @@ public class EstoqueWS {
 		repositorio.put("ARQ", new ItemEstoque("ARQ", 2));
 	}
 
+//	@WebMethod
+//	public ItemEstoque getQuantidade(String codigo) {
+//		return repositorio.get(codigo);
+//	}
+
 	@WebMethod
-	public ItemEstoque getQuantidade(String codigo) {
-		return repositorio.get(codigo);
+	public List<ItemEstoque> getQuantidade(List<String> codigos) {
+		List<ItemEstoque> itens = new ArrayList<>();
+		if (codigos == null || codigos.isEmpty()) {
+			return itens;
+		}
+		for (String codigo : codigos) {
+			if (repositorio.containsKey(codigo)) {
+				itens.add(repositorio.get(codigo));
+			}
+		}
+		return itens;
 	}
 }
