@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 
 @WebService
@@ -30,8 +32,9 @@ public class EstoqueWS {
 //		return repositorio.get(codigo);
 //	}
 
-	@WebMethod
-	public List<ItemEstoque> getQuantidade(List<String> codigos) {
+	@WebMethod(operationName = "ItensPeloCodigo")
+	@WebResult(name = "ItemEstoque")
+	public List<ItemEstoque> getQuantidade(@WebParam(name = "codigo") List<String> codigos) {
 		List<ItemEstoque> itens = new ArrayList<>();
 		if (codigos == null || codigos.isEmpty()) {
 			return itens;
