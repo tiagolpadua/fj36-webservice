@@ -66,4 +66,6 @@ public class PagamentoResource {
 		System.out.println("Pagamento confirmado: " + pagamento);
 		return pagamento;
 	}
+	
+	
 }
