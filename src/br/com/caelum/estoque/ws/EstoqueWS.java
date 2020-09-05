@@ -37,6 +37,8 @@ public class EstoqueWS {
 	public List<ItemEstoque> getQuantidade(@WebParam(name = "codigo") List<String> codigos,
 			@WebParam(name = "tokenUsuario", header = true) String token) {
 
+		System.out.println(">>>>>>>>>>>>> getQuantidade");
+		
 		if (token == null || !token.equals("TOKEN123")) {
 			throw new AutorizacaoException("Nao autorizado");// vamos gerar essa classe
 		}
