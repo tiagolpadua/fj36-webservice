@@ -28,4 +28,9 @@ public class ItemEstoque {
 		this.quantidade = quantidade;
 	}
 
+	@Override
+	public String toString() {
+		return "ItemEstoque [codigo=" + codigo + ", quantidade=" + quantidade + "]";
+	}
+
 }
