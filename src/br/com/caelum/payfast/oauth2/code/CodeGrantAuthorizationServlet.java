@@ -23,31 +23,28 @@ import br.com.caelum.payfast.oauth2.TokenDao;
 public class CodeGrantAuthorizationServlet extends HttpServlet {
 	@Inject
 	private TokenDao tokenDao;
-	
+
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			HttpSession session = req.getSession();
 			String login = req.getParameter("login");
 			String senha = req.getParameter("senha");
 			String redirectURI = (String) session.getAttribute("redirectURI");
-			
+
 			// Valida as credenciais do usuário
-			if("usuario".equals(login) && "senha".equals(senha)) {
-				OAuthResponse oAuthResponse = null;
-				// código para gerar o authorization code
-				
-				
-				
-				// Envia o authorization code para o client application
+			if ("usuario".equals(login) && "senha".equals(senha)) {
+				OAuthIssuer issuer = new OAuthIssuerImpl(new MD5Generator());
+				String code = issuer.authorizationCode();
+				tokenDao.adicionaAuthorizationCode(code);
+				OAuthAuthorizationResponseBuilder builder = OAuthASResponse.authorizationResponse(req, 302);
+				OAuthResponse oAuthResponse = builder.location(redirectURI).setCode(code).buildQueryMessage();
 				resp.sendRedirect(oAuthResponse.getLocationUri());
-				
+
 			} else {
-				req.getRequestDispatcher("/login.jsp")
-					.forward(req, resp);
+				req.getRequestDispatcher("/login.jsp").forward(req, resp);
 			}
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

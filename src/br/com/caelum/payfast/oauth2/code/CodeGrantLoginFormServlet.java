@@ -17,9 +17,12 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 @WebServlet("/oauth/code/form")
 public class CodeGrantLoginFormServlet extends HttpServlet {
 	
+	private static final long serialVersionUID = 8304035941074893045L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		System.out.println(">>>>>>>>>>>>>>>>> /oauth/code/form");
 		try {
 			HttpSession session = req.getSession();
 			OAuthAuthzRequest oauthReq = new OAuthAuthzRequest(req);

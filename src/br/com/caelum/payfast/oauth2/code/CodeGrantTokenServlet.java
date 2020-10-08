@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.issuer.UUIDValueGenerator;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
@@ -20,41 +19,43 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import br.com.caelum.payfast.oauth2.TokenDao;
 
 @WebServlet("/oauth/code/token")
-public class CodeGrantTokenServlet extends HttpServlet{
+public class CodeGrantTokenServlet extends HttpServlet {
 	@Inject
 	private TokenDao tokenDao;
-	
+
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			OAuthTokenRequest oauthRequest = new OAuthTokenRequest(req);
 			String clientId = oauthRequest.getClientId();
 			String secret = oauthRequest.getClientSecret();
 			String code = oauthRequest.getCode();
-			
+
 			// Valida o authorization code
-			if(!tokenDao.existeAuthorizationCode(code)){
+			if (!tokenDao.existeAuthorizationCode(code)) {
 				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			}
 			// Valida as credenciais do client application
-			if(!"livraria_id".equals(clientId) || !"livraria_secret".equals(secret)){
+			if (!"livraria_id".equals(clientId) || !"livraria_secret".equals(secret)) {
 				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			}
-			
+
 			OAuthResponse oAuthResponse = null;
 			// Código para gerar o access token
-			
-			
-			
+			OAuthIssuer issuer = new OAuthIssuerImpl(new MD5Generator());
+			String accessToken = issuer.accessToken();
+			tokenDao.adicionaAccessToken(accessToken);
+			oAuthResponse = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK).setAccessToken(accessToken)
+					.setTokenType("Bearer").buildJSONMessage();
+
 			// Envia o access token para o client application
 			resp.setHeader("Content-type", "application/json");
 			resp.getWriter().print(oAuthResponse.getBody());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 }
