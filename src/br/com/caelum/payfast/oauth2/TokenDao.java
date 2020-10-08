@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class TokenDao {
 	private List<String> accessTokens = new ArrayList<>();
+	private List<String> authorizationCodes = new ArrayList<>();
 
 	public void adicionaAccessToken(String token) {
 		System.out.println("Adicionando token " + token);
@@ -17,5 +18,13 @@ public class TokenDao {
 	public boolean existeAccessToken(String token) {
 		System.out.println("Verificando token " + token);
 		return accessTokens.contains(token);
+	}
+
+	public void adicionaAuthorizationCode(String code) {
+		authorizationCodes.add(code);
+	}
+
+	public boolean existeAuthorizationCode(String code) {
+		return authorizationCodes.contains(code);
 	}
 }
