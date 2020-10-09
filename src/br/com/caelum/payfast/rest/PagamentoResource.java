@@ -28,7 +28,14 @@ import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import br.com.caelum.payfast.modelo.Pagamento;
 import br.com.caelum.payfast.modelo.Transacao;
 import br.com.caelum.payfast.oauth2.TokenDao;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
 
+@Api
 @Path("/pagamentos")
 @Singleton
 public class PagamentoResource {
@@ -57,9 +64,13 @@ public class PagamentoResource {
 		return repositorio.get(id);
 	}
 
+	@ApiOperation(value = "Cria novo pagamento", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiResponses(@ApiResponse(code = 201, message = "Novo pagamento criado", response = Pagamento.class, responseHeaders = @ResponseHeader(name = "Location", description = "uri do novo pagamento", response = String.class)))
 	@POST
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public Response criarPagamento(Transacao transacao) throws URISyntaxException {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response criarPagamento(
+			@ApiParam(value = "Transação", name = "transacao", required = true) Transacao transacao)
+			throws URISyntaxException {
 		Response unauthorized = Response.status(Status.UNAUTHORIZED).build();
 		try {
 			OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request);
@@ -85,6 +96,7 @@ public class PagamentoResource {
 		}
 	}
 
+	@ApiResponses(@ApiResponse(code = 200, message = "Pagamento confirmado", response = Pagamento.class))
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON) // cuidado javax.ws.rs
